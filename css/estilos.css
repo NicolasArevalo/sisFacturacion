@@ -1,0 +1,29 @@
+body{
+    background: rgb(233,174,174);
+    background: linear-gradient(90deg, rgba(233,174,174,1) 0%, rgba(240,243,247,1) 100%);
+}
+.ms-1{
+    margin-top: 20px;
+}
+
+.container{
+    background-color: aliceblue;
+    border-radius: 8px;
+}
+
+h1{
+    padding: 20px;
+}
+
+td button{
+    border: none;
+}
+
+.total{
+    text-align: center;
+    padding-right: 20%;
+}
+
+.total b p{
+    padding-right: 20%;
+}
