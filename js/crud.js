@@ -183,13 +183,12 @@ $(function(){
             var sql="SELECT * FROM facturas ORDER BY id ASC";
             transaction.executeSql(sql, undefined, function(transaction, result){
                 console.log(result.rows)
-                if(result.rows.nombre){
+                if(result.rows.item){
                     console.log(result.rows.length)
                     $("#listaFacturas").append('<tr><th>#</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Tipo de pago</th><th></th></tr>')
                     for(var i=0; i<result.rows.length; i++){
                         
-                        var row=result.rows.nombre(i);
-                        alert('itwork')
+                        var row=result.rows.item(i);
                         var item=row.nombre;
                         var cantidad=row.total;
                         var id=row.id;
@@ -204,6 +203,7 @@ $(function(){
                         estado+' </span></td><td><span>'+
                         tpago+' </span></td><td><button type="button" id="F'+
                         id+'" onclick="eliminarFacturas()"><i class="fas fa-shopping-cart">Pagar</i></button></i></td></tr>');
+
                     }
                 }else{
                     $("#listaFacturas").append('<tr><td colspan="5" align="center">No existen los productos.</td></tr>');
@@ -265,7 +265,7 @@ $(function(){
                 }, function (transaction, err) {
                     alert(err.message);
                 })
-
+                
                 limpiar(); 
                 cargarFacturas(); 
 
