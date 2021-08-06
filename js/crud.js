@@ -1,9 +1,10 @@
 var nuevoId;
-var db=openDatabase("itemDB","1.0", "itemDB",65535);
-const tiempoTranscurrido = Date.now();
-const hoy=new Date(tiempoTranscurrido);
-var totalFactura=0;
+var db=openDatabase("itemDB","1.0", "itemDB",65535);// Conexión con la BD
+const tiempoTranscurrido = Date.now(); // crea la fecha
+const hoy=new Date(tiempoTranscurrido); // crea el objeto date con la fecha
+var totalFactura=0; // Crea variable global del total de la factura
 
+// Función que limpia la pantalla de las tablas para que no se repitan
 
 function limpiar(){
     document.getElementById("item").value="";
@@ -43,6 +44,8 @@ function eliminarRegistro(){
 
 }
 
+//      eliminar facturas
+
 function eliminarFacturas(){
 
     $(document).one('click','button[type="button"]', function(event){
@@ -58,10 +61,12 @@ function eliminarFacturas(){
             });
         });
         nuevoId=lista[0].substr(1);
+
         db.transaction(function(transaction){
-            var sql="DELETE FROM facturas WHERE id="+nuevoId+";"
+            estado='Pagado';
+            var sql="UPDATE facturas SET estado='"+estado+"' WHERE id="+nuevoId+";"
             transaction.executeSql(sql, undefined, function(){
-                alert('Registro borrado bien cool.');
+                alert('Aquí sale la pantalla de pago pero hagamos de cuenta que ya pagaste ;)');
                 location.reload();
             }, function(transaction, err){
                 alert('Oh noooo: '+err.message);
@@ -71,19 +76,24 @@ function eliminarFacturas(){
 
 }
 
+// No es botón pero esta función le da el valor al total de productos
+
 function generarTotal(){
 
     db.transaction(function(transaction){
-        var sql="SELECT precio FROM productos";
+        var sql="SELECT cantidad, precio FROM productos";
         transaction.executeSql(sql, undefined, function(transaction, result){
             if(result.rows.length){
                 totalFactura=0;
                 for(var i=0; i<result.rows.length; i++){
                     var row=result.rows.item(i);
+                    var cantidad=row.cantidad;
                     var precio=row.precio;
-                    totalFactura += precio;
+                    var precioTotal=precio*cantidad; // Precio x cantidad de objetos
+
+                    totalFactura += precioTotal;
                 }
-                $('#mostrarTotal').append(totalFactura+' COP$');
+                $('#mostrarTotal').append('$ '+totalFactura+' COP');
             }else{
                 $('#mostrarTotal').append(' - ');
             }   
@@ -135,15 +145,20 @@ $(function(){
         });
     });
 
-    //Cargar la lista de productos
+    //Cargar tablas, total y limpiar las otras
 
-    $("#actualizar").click(function(){
+    limpiar();
+    cargarDatos();
+    cargarFacturas();
+    generarTotal();
+    
+/*  Aquí se actualizaba con un botón pero mejor que se haga solo, no?   $("#actualizar").click(function(){
         cargarDatos();
         cargarFacturas();
         generarTotal();
         limpiar();
     })
-
+ */
     // Función que carga la lista de productos | creación de los items de la tabla
     function cargarDatos(){
         $("#listaProductos").children().remove();
@@ -151,18 +166,19 @@ $(function(){
             var sql="SELECT * FROM productos ORDER BY id ASC";
             transaction.executeSql(sql, undefined, function(transaction, result){
                 if(result.rows.item){
-                    $("#listaProductos").append('<tr><th>Código</th><th>Producto</th><th>Cantidad</th><th>Precio</th><th></th><th></th></tr>')
+                    $("#listaProductos").append('<tr><th>Código</th><th>Producto</th><th>Cantidad</th><th>Precio c/u</th><th></th><th></th></tr>')
                     for(var i=0; i<result.rows.length; i++){
                         var row=result.rows.item(i);
                         var item=row.item;
                         var cantidad=row.cantidad;
                         var id=row.id;
                         var precio=row.precio;
+                        
                         $("#listaProductos").append('<tr id="fila'+id+'" class="Reg_A'+id+'"> <td><span class="miId">A'+
                         id+'</span></td><td><span>'+
                         item+'</span></td><td><span>'+
-                        cantidad+'</span></td><td><span>'+
-                        precio+' COP$ </span></td><td><button type="button" id="A'+
+                        cantidad+'</span></td><td><span>$ '+
+                        precio+' COP </span></td><td><button type="button" id="A'+
                         id+'" onclick="eliminarRegistro()"><i class="fas fa-backspace"></button></i></td></tr>');
                     }
                 }else{
@@ -176,18 +192,17 @@ $(function(){
             )
         })  
     }  
-    // Función que carga lista de facturas | también crea
+    // Función que carga lista de facturas | también crea los items
     function cargarFacturas(){
         $("#listaFacturas").children().remove();
         db.transaction(function(transaction){
             var sql="SELECT * FROM facturas ORDER BY id ASC";
             transaction.executeSql(sql, undefined, function(transaction, result){
-                console.log(result.rows)
+                
                 if(result.rows.item){
-                    console.log(result.rows.length)
+                    
                     $("#listaFacturas").append('<tr><th>#</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Tipo de pago</th><th></th></tr>')
                     for(var i=0; i<result.rows.length; i++){
-                        
                         var row=result.rows.item(i);
                         var item=row.nombre;
                         var cantidad=row.total;
@@ -197,12 +212,12 @@ $(function(){
                         var tpago=row.tpago;
                         $("#listaFacturas").append('<tr id="fila'+id+'" class="Reg_F'+id+'"> <td><span class="miId2">F'+
                         id+'</span></td><td><span>'+
-                        item+'</span></td><td><span>'+
-                        cantidad+'COP$ </span></td><td><span>'+
+                        item+'</span></td><td><span>$ '+
+                        cantidad+' COP </span></td><td><span>'+
                         fecha+' </span></td><td><span>'+
                         estado+' </span></td><td><span>'+
                         tpago+' </span></td><td><button type="button" id="F'+
-                        id+'" onclick="eliminarFacturas()"><i class="fas fa-shopping-cart">Pagar</i></button></i></td></tr>');
+                        id+'" onclick="eliminarFacturas()"><i class="fas fa-shopping-cart"> Pagar</i></button></i></td></tr>');
 
                     }
                 }else{
@@ -217,7 +232,7 @@ $(function(){
         })  
     }
 
-    // Insertar un nuevo registro
+    // Insertar un nuevo producto
     $("#insertar").click(function(){
         var item=$("#item").val();
         var cantidad=$("#cantidad").val();
@@ -243,33 +258,44 @@ $(function(){
     $("#mandarFactura").click(function(){
         
         if (document.getElementById('nombreUsuario').value != "") {
-            var nombre = $("#nombreUsuario").val();
-            var total = totalFactura;
-            var fecha = hoy.toLocaleDateString();
-            var estado = "Activo";
-            var crediOcontado;
-            var tpago;
-            console.log($("#inlineRadio1").prop('checked'))
-            console.log($("#inlineRadio2").prop('checked'))
+            function mandarDatosFactura(){
+                var nombre = $("#nombreUsuario").val();
+                var total = totalFactura;
+                var fecha = hoy.toLocaleDateString();
+                var estado = "Activo";
+                var crediOcontado;
+                var tpago;
+                console.log($("#inlineRadio1").prop('checked'))
+                console.log($("#inlineRadio2").prop('checked'))
+                if ($("#inlineRadio1").prop('checked')) {
+                    tpago = "Contado";
+                } else if ($("#inlineRadio2").prop('checked')) {
+                    tpago = "Crédito";
+                } else {
+                    alert('No se seleccionó método de pago.');
+                }
+
+                db.transaction(function (transaction) {
+                    var sql = "INSERT INTO facturas(nombre, total, fecha, estado, tpago) VALUES(?,?,?,?,?)";
+                    transaction.executeSql(sql, [nombre, total, fecha, estado, tpago], function () {
+                    }, function (transaction, err) {
+                        alert(err.message);
+                    })
+
+                    limpiar();
+                    cargarFacturas();
+
+            })
+            }
             if ($("#inlineRadio1").prop('checked')) {
                 tpago = "Contado";
+                mandarDatosFactura();
             } else if ($("#inlineRadio2").prop('checked')) {
                 tpago = "Crédito";
+                mandarDatosFactura();
             } else {
                 alert('No se seleccionó método de pago.');
             }
-
-            db.transaction(function (transaction) {
-                var sql = "INSERT INTO facturas(nombre, total, fecha, estado, tpago) VALUES(?,?,?,?,?)";
-                transaction.executeSql(sql, [nombre, total, fecha, estado, tpago], function () {
-                }, function (transaction, err) {
-                    alert(err.message);
-                })
-                
-                limpiar(); 
-                cargarFacturas(); 
-
-            })
         }else{
             alert('No puedes generar factura sin tu nombre.');
         }
@@ -278,10 +304,22 @@ $(function(){
     })
 
 
+    //Eliminar toda la tabla productos
+    $("#eliminarPr").click(function(){
+        if(!confirm("Está seguro de borrar todo?","")) return;
+        db.transaction(function(transaction){
+            var sql="DROP TABLE productos";
+            transaction.executeSql(sql, undefined, function(){
+                alert("Tabla correctamente eliminada. La página se recargará...");
+                location.reload();
+            }, function(transaction, err){
+                alert('Oh, algo no salió como esperabamos :x ', err.message);
+            })
+        })
+    })
 
-
-    //Eliminar toda la tabla
-    $("#eliminarTodo").click(function(){
+    //Eliminar toda la tabla productos
+    $("#eliminarFa").click(function(){
         if(!confirm("Está seguro de borrar todo?","")) return;
         db.transaction(function(transaction){
             var sql="DROP TABLE facturas";
@@ -293,6 +331,4 @@ $(function(){
             })
         })
     })
-
-
 })

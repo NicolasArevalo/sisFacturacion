@@ -9,6 +9,7 @@ body{
 .container{
     background-color: aliceblue;
     border-radius: 8px;
+    margin-top: 20px;
 }
 
 h1{
@@ -21,7 +22,6 @@ td button{
 
 .total{
     text-align: center;
-    padding-right: 20%;
 }
 
 .total b p{

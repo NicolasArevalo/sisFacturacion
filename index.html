@@ -19,13 +19,18 @@
 
 <body>
 
-    <h1 class="text-center">Software de facturación</h1>
-    <h3 class="text-center"><small class="text-muted"> Por Nicolás Arévalo</small></h3>
+    
 
-    <div class="container px-4">
+    <div class="container px-5 shadow-lg">
+
+        <h1 class="text-center">Software de facturación</h1>
+        <h3 class="text-center"><small class="text-muted"> Por Nicolás Arévalo</small></h3>
+        
         <br>
-            <button type="button" id="crear" class="btn btn-success text-center">Empezar</button>
-            <span> Este botón crea la BD y las tablas como caché en el navegador.</span>
+            <div class="text-center">
+                <button type="button" id="crear" class="btn btn-success text-center">Empezar</button>
+                <span> Este botón crea la BD y las tablas como caché en el navegador.</span>
+            </div>
         <hr>
         <div class="p-4 row">
             <form>
@@ -35,14 +40,12 @@
                     <input type="text" class="form-control" placeholder="Ingresa tu nombre" required id="nombreUsuario">
                     <span>-- </span>          
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                            required value="contado">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="contado">
                         <label class="form-check-label" for="inlineRadio1">Contado--</label>
                     </div>
                     <span>-- </span> 
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                            required value="credito">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="credito">
                         <label class="form-check-label" for="inlineRadio2">Credito--</label>
                     </div>
                 </div>
@@ -54,15 +57,21 @@
                     <legend> Cantidad </legend>
                     <input type="text" class="form-control" id="cantidad" />
                     <legend> Precio </legend>
-                    <input type="text" class="form-control" id="precio" />
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon2">$</span>
+                        <input type="text" class="form-control" id="precio" />
+                        <span class="input-group-text" id="basic-addon2">COP</span>
+                    </div>
                     <br>
 
-                    <button type="button" id="insertar" class="btn btn-warning">Insertar producto</button>
+                    <div class="col text-center">
 
-                    <button type="button" id="actualizar" class="btn btn-primary">Mostrar/actualizar</button>
+                        <button type="button" id="insertar" class="btn btn-primary">Insertar producto</button>                        
+                        <button type="button" id="eliminarPr" class="btn btn-danger">Eliminar tabla productos</button>
+                        <button type="button" id="eliminarFa" class="btn btn-danger">Eliminar tabla facturas</button>
 
-                    <button type="button" id="eliminarTodo" class="btn btn-danger">Eliminar tabla</button>
-
+                    </div>
+                    
                 </fieldset>
 
                 <hr>
@@ -77,7 +86,10 @@
                     <p id="mostrarTotal"></p>
                 </div>
 
-                <button type="sumbit" id="mandarFactura" class="btn btn-success">Generar factura</button>
+                <div class="col text-center">
+                    <button type="sumbit" id="mandarFactura" class="btn btn-success">Generar factura</button>
+                </div>
+                
 
                 <hr>
                 <h3>Lista de facturas: </h3>
