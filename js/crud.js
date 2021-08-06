@@ -83,7 +83,7 @@ function generarTotal(){
                     var precio=row.precio;
                     totalFactura += precio;
                 }
-                $('#mostrarTotal').append(totalFactura+' USD$');
+                $('#mostrarTotal').append(totalFactura+' COP$');
             }else{
                 $('#mostrarTotal').append(' - ');
             }   
@@ -162,7 +162,7 @@ $(function(){
                         id+'</span></td><td><span>'+
                         item+'</span></td><td><span>'+
                         cantidad+'</span></td><td><span>'+
-                        precio+' USD$ </span></td><td><button type="button" id="A'+
+                        precio+' COP$ </span></td><td><button type="button" id="A'+
                         id+'" onclick="eliminarRegistro()"><i class="fas fa-backspace"></button></i></td></tr>');
                     }
                 }else{
@@ -198,7 +198,7 @@ $(function(){
                         $("#listaFacturas").append('<tr id="fila'+id+'" class="Reg_F'+id+'"> <td><span class="miId2">F'+
                         id+'</span></td><td><span>'+
                         item+'</span></td><td><span>'+
-                        cantidad+'USD$ </span></td><td><span>'+
+                        cantidad+'COP$ </span></td><td><span>'+
                         fecha+' </span></td><td><span>'+
                         estado+' </span></td><td><span>'+
                         tpago+' </span></td><td><button type="button" id="F'+
