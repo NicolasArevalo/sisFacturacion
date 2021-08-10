@@ -130,6 +130,34 @@ function productosEnArray() {
     });
 }
 
+function mostrarProductos(){
+    $(document).one('click','button[type="button"]', function(event){
+        let id=this.id;
+        var lista=[];
+        $('#listaFacturas').each(function(){
+            var celdas=$(this).find('tr.Reg_'+id);
+            celdas.each(function(){
+                var registro=$(this).find('span.miId2');
+                registro.each(function(){
+                    lista.push($(this).html())
+                });
+            });
+        });
+        nuevoId=lista[0].substr(1);
+
+        db.transaction(function(transaction){
+            var sql="SELECT productos FROM facturas WHERE id="+nuevoId+";"
+            transaction.executeSql(sql, undefined, function(transaction, result){
+                var row = result.rows.item(0);
+                var productos = JSON.parse(row.productos);
+                alert(productos);
+            }, function(transaction, err){
+                alert('Oh noooo, no pudimos traer los productos. '+err.message);
+            });
+        });
+    });
+}
+
 
 $(function () {
     //Crear la tabla de productos
@@ -216,7 +244,7 @@ $(function () {
 
                 if (result.rows.item) {
 
-                    $("#listaFacturas").append('<tr><th>#</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Tipo de pago</th><th></th></tr>')
+                    $("#listaFacturas").append('<tr><th>#</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Tipo de pago</th><th></th><th></th></tr>')
                     for (var i = 0; i < result.rows.length; i++) {
                         var row = result.rows.item(i);
                         var item = row.nombre;
@@ -232,6 +260,7 @@ $(function () {
                             fecha + ' </span></td><td><span>' +
                             estado + ' </span></td><td><span>' +
                             tpago + ' </span></td><td><button type="button" id="F' +
+                            id + '" onclick="mostrarProductos()"><i class="far fa-eye"> Mostrar</i></button></td><td><button type="button" id="F' +
                             id + '" onclick="eliminarFacturas()"><i class="fas fa-shopping-cart"> Pagar</i></button></i></td></tr>');
 
                     }
@@ -289,10 +318,10 @@ $(function () {
                 
                 productosEnArray();
                 db.transaction(function (transaction) {
-                    console.log('it work calvo, you did it')
+
                     var sql = "INSERT INTO facturas(nombre, total, fecha, estado, tpago, productos) VALUES(?,?,?,?,?,?)";
                     transaction.executeSql(sql, [nombre, total, fecha, estado, tpago, productosJson], function () {
-                        console.log('it work calvo, you did it')
+
                     }, function (transaction, err) {
 
                         alert(err.message);
