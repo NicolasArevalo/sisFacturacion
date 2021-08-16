@@ -15,7 +15,7 @@ function limpiar(){
 
 // funcionalidad de los botones
 //      eliminar registro
-alert('Hola, antes de empezar saltarán 3 errores, ya que no tienes creadas las tablas. No te asustes, cierra las alertas y dale en empezar. Gracias ;).');
+
 function eliminarRegistro(){
     
     $(document).one('click','button[type="button"]', function(event){
